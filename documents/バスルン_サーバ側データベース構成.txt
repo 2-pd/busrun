@@ -1,0 +1,39 @@
+--------------------------------------------------------------------------------
+
+  路線バス運用情報アプリ「バスルン」設計案    ページ(2)
+
+--------------------------------------------------------------------------------
+
+_/_/_/_/ データベース _/_/_/_/
+
+███ operation_data.db ███
+
+`busrun_trips` 便情報
+  `diagram_revision` TEXT NOT NULL ダイヤ改正識別名
+  `service_id` TEXT NOT NULL ダイヤ識別名
+  `operation_id` TEXT NOT NULL 車両行路識別名
+  `trip_id` TEXT NOT NULL 便識別名
+
+  PRIMARY KEY(`diagram_revision`, `service_id`, `operation_id`, `trip_id`)
+
+
+`busrun_operation_logs` 運用情報ログ
+  `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
+  `trip_id` TEXT NOT NULL 便識別名
+  `vehicle_name` TEXT NOT NULL 車両識別名
+
+  PRIMARY KEY(`operation_date`, `trip_id`, `vehicle_name`)
+  INDEX `busrun_idx_l1`(`vehicle_name`)
+
+
+`busrun_data` 運用データ
+  `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
+  `operation_id` TEXT NOT NULL 車両行路識別名
+  `assign_order` INTEGER NOT NULL 当該行路へ何番目に充当された車両の情報か(1から始まり、差し替えのたびに1ずつ増える)
+  `vehicle_name` TEXT NOT NULL 車両識別名
+  `updated_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の情報更新日時(同一日の同一行路識別名のレコードは全て同じ更新日時とする)
+
+  PRIMARY KEY(`operation_date`, `operation_id`, `assign_order`)
+  INDEX `unyohub_idx_d1`(`vehicle_name`, `operation_date`, `operation_id`)
+  INDEX `unyohub_idx_d2`(`operation_date`, `updated_datetime`, `operation_id`, `assign_order`)
+  INDEX `unyohub_idx_d3`(`operation_id`, `operation_date`, `assign_order`)

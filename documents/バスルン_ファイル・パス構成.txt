@@ -23,6 +23,7 @@ _/_/_/_/ ファイル構成 _/_/_/_/
 └ config/
    └ main.ini ・・・基本設定ファイル
    └ agencies.json ・・・事業者一覧情報の設定ファイル
+   └ gtfs_realtime_endpoints.json ・・・GTFSルート最新情報取得エンドポイント設定ファイル
 └ data/ ・・・事業者ごとのデータフォルダ
    └ ****/
       └ operation_data.db ・・・運用情報を格納するデータベース本体

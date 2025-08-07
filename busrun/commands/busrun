@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
+import importlib
+import sys
+import os
+
+
+BUSRUN_COMMANDS_APP_NAME = "バスルン コマンドラインツール"
+BUSRUN_COMMANDS_VERSION = "25.08-1"
+
+BUSRUN_DATA_DIR = "../data"
+
+
+def mes (log_text, is_error=False, is_heading=False):
+    if is_error:
+        print("\x1b[31m\x1b[1m【エラー】\x1b[22m" + str(log_text) + "\x1b[0m")
+    elif is_heading:
+        print("\n\x1b[94m_/_/_/_/\x1b[0m " + str(log_text) + " \x1b[94m_/_/_/_/\x1b[0m\n")
+    else:
+        print(str(log_text))
+
+
+print(BUSRUN_COMMANDS_APP_NAME + " \x1b[90mv" + BUSRUN_COMMANDS_VERSION + "\x1b[0m")
+
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+data_dir = (os.path.abspath(BUSRUN_DATA_DIR))
+
+args = sys.argv
+arg_count = len(args)
+
+if arg_count >= 2:
+    match args[1]:
+        case _:
+            print("\x1b[31mコマンド \x1b[1m" + args[1] + "\x1b[22m は存在しません\x1b[0m")

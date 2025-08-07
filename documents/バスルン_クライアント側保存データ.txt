@@ -1,0 +1,167 @@
+--------------------------------------------------------------------------------
+
+  路線バス運用情報アプリ「バスルン」設計案    ページ(5)
+
+--------------------------------------------------------------------------------
+
+_/_/_/_/ クライアント側ローカルストレージ _/_/_/_/
+
+███ busrun_instance_info ███
+
+{
+    "last_modified_timestamp" : このデータの元となったINIファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
+    以降の項目はinstance_info.phpのレスポンスをそのまま展開して使用
+}
+
+
+███ busrun_config ███
+
+{
+    "busrun_version" : 最終実行時のアプリバージョン文字列,
+    "refresh_interval" : 運用データを自動で再取得する間隔(分単位の整数値),
+    "operation_data_cache_period" : 運用データのキャッシュ保管日数(整数値)
+}
+
+
+███ busrun_agencies_cache ███
+
+{
+    "last_modified_timestamp" : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
+    以降の項目はagencies.phpのレスポンスをそのまま展開して使用
+}
+
+
+_/_/_/_/ クライアント側IndexedDB "busrun_caches" _/_/_/_/
+
+※「・」のある項目はKeyPathに指定する
+
+███ agency_info ███
+
+{
+    ・agency_id : 事業者識別名,
+    last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
+    以降の項目はagency_info.phpのレスポンスをそのまま展開して使用
+}
+
+
+███ vehicle_icons ███
+
+{
+    ・agency_id : 事業者識別名,
+    last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
+    icons : vehicle_icons.phpのレスポンスをパースしてそのまま格納
+}
+
+
+███ vehicles ███
+
+{
+    ・agency_id : 事業者識別名,
+    last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
+    以降の項目はvehicles.phpのレスポンスをパースしてそのまま展開して使用
+}
+
+
+███ diagram_revisions ███
+
+{
+    ・agency_id : 事業者識別名,
+    last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
+    diagram_revisions : diagram_revisions.phpのレスポンスをパースしてそのまま格納
+}
+
+
+███ route_info ███
+
+{
+    ・agency_id : 事業者識別名,
+    ・diagram_revision : ダイヤ改正識別名,
+    last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
+    以降の項目はroute_info.phpのレスポンスをパースしてそのまま展開して使用
+}
+
+
+███ diagram_info ███
+
+{
+    ・agency_id : 事業者識別名,
+    ・diagram_revision : ダイヤ改正識別名,
+    last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
+    以降の項目はdiagram_info.phpのレスポンスをパースしてそのまま展開して使用
+}
+
+
+███ operation_tables ███
+
+{
+    ・agency_id : 事業者識別名,
+    ・diagram_revision : ダイヤ改正識別名,
+    ・service_id : ダイヤ識別名,
+    last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
+    "operations" : {
+        "車両行路識別名" : { 各車両行路の情報
+            trip_list : 便識別名を配列で,
+            starting_time : 「HH:MM」形式の出庫時刻,
+            ending_time : 「HH:MM」形式の入庫時刻
+        }...
+    },
+    operation_order : 車両行路識別名を表示順に配列で,
+    trips : {
+        便識別名 : {
+            operation_id : 車両行路識別名,
+            first_departure_time : 「HH:MM」形式の始発時刻,
+            final_arrival_time : 「HH:MM」形式の終着時刻,
+            starting_stop : 始発停留所の停留所識別名,
+            terminal_stop : 終着停留所の停留所識別名
+        }...
+    }
+}
+
+
+███ timetables ███
+
+{
+    ・agency_id : 事業者識別名,
+    ・diagram_revision : ダイヤ改正識別名,
+    ・service_id : ダイヤ識別名,
+    last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
+    timetable : timetables.phpのレスポンスをパースしてそのまま格納
+}
+
+
+███ stop_timetables ███
+
+{
+    ・agency_id : 事業者識別名,
+    ・diagram_revision : ダイヤ改正識別名,
+    ・service_id : ダイヤ識別名,
+    ・stop_id : ダイヤ識別名,
+    last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
+    platform_timetables : {
+        乗り場識別名 : [ 各乗り場から乗車可能な便の情報(発車時刻順)
+            {
+                trip_id : 便識別名,
+                route_id : 経路識別名,
+                departure_time : 「HH:MM」形式の発車時刻,
+                stop_headsign : 行き先表示
+            }...
+        ]...
+    }
+}
+
+
+███ operation_data ███
+
+{
+    ・agency_id : 事業者識別名,
+    ・operation_date : 「YYYY-MM-DD」形式の日付,
+    last_modified_timestamp : サーバのデータが最後に更新された日時のタイムスタンプ値(UTC、秒単位),
+    operations : {
+        車両行路識別名 : {
+            vehicle_name : 車両識別名,
+            relieved_vehicles : 差し替え前の車両の車両識別名を充当順に配列で(差し替えがなければ省略)  
+        }...
+    }
+}
+
+index "idx_od1" keyPath : "operation_date"

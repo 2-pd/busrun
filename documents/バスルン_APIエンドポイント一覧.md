@@ -193,6 +193,9 @@ diagram_info.jsonの内容を返す
 **運用表JSONファイルの変更日時がタイムスタンプ以前だった場合** :  
 文字列「NO_UPDATES_AVAILABLE」  
   
+**運用表JSONファイルが存在しなかった場合** :  
+文字列「DATA_NOT_AVAILABLE」  
+  
 **エラーの場合** :  
 文字列「ERROR: 」とそれに続くエラー内容文
 

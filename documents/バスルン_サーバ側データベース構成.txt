@@ -15,6 +15,7 @@ _/_/_/_/ データベース _/_/_/_/
   `trip_id` TEXT NOT NULL 便識別名
 
   PRIMARY KEY(`diagram_revision`, `service_id`, `operation_id`, `trip_id`)
+  INDEX `busrun_idx_t1`(`diagram_revision`, `service_id`, `trip_id`)
 
 
 `busrun_operation_logs` 運用情報ログ
@@ -22,8 +23,8 @@ _/_/_/_/ データベース _/_/_/_/
   `trip_id` TEXT NOT NULL 便識別名
   `vehicle_name` TEXT NOT NULL 車両識別名
 
-  PRIMARY KEY(`operation_date`, `trip_id`, `vehicle_name`)
-  INDEX `busrun_idx_l1`(`vehicle_name`)
+  PRIMARY KEY(`operation_date`, `trip_id`)
+  INDEX `busrun_idx_l1`(`operation_date`, `vehicle_name`)
 
 
 `busrun_data` 運用データ
@@ -34,6 +35,6 @@ _/_/_/_/ データベース _/_/_/_/
   `updated_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の情報更新日時(同一日の同一行路識別名のレコードは全て同じ更新日時とする)
 
   PRIMARY KEY(`operation_date`, `operation_id`, `assign_order`)
-  INDEX `unyohub_idx_d1`(`vehicle_name`, `operation_date`, `operation_id`)
-  INDEX `unyohub_idx_d2`(`operation_date`, `updated_datetime`, `operation_id`, `assign_order`)
-  INDEX `unyohub_idx_d3`(`operation_id`, `operation_date`, `assign_order`)
+  INDEX `busrun_idx_d1`(`vehicle_name`, `operation_date`, `operation_id`)
+  INDEX `busrun_idx_d2`(`operation_date`, `updated_datetime`, `operation_id`, `assign_order`)
+  INDEX `busrun_idx_d3`(`operation_id`, `operation_date`, `assign_order`)

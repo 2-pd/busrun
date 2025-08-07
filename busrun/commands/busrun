@@ -31,5 +31,11 @@ arg_count = len(args)
 
 if arg_count >= 2:
     match args[1]:
+        case "init-db":
+            if arg_count == 3:
+                initialize_db = importlib.import_module("modules.init_db")
+                initialize_db.initialize_db(mes, data_dir + "/" + os.path.basename(args[2]))
+            else:
+                print("\x1b[31m引数の数が異常です\x1b[0m")
         case _:
             print("\x1b[31mコマンド \x1b[1m" + args[1] + "\x1b[22m は存在しません\x1b[0m")

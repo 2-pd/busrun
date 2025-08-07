@@ -3,7 +3,7 @@
 import os
 import sqlite3
 
-def initialize_db (mes, main_dir):
+def init_db (mes, main_dir):
     mes("データベースのセットアップ", is_heading=True)
     
     mes("データベースに接続しています...")

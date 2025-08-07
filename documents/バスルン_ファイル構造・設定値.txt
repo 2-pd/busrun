@@ -149,11 +149,11 @@ manual_url ユーザーマニュアルのURL
 {
     "services" : { ダイヤの一覧
         "ダイヤ識別名" : {
-            "diagram_name" : ダイヤ表示名,
+            "service_name" : ダイヤ表示名,
             "main_color" : 時刻表の背景色
         }
     },
-    "diagram_order" : ダイヤ識別名を表示させたい順に配列で,
+    "service_order" : ダイヤ識別名を表示させたい順に配列で,
     "calendar" : [ ダイヤ判定規則
         {
             "service_id" : ダイヤ識別名,

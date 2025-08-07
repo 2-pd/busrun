@@ -48,7 +48,7 @@ def get_agency_gtfs_realtime (mes, main_dir, url):
     mes("取得したデータを保存しています...")
     
     try:
-        with open(main_dir + "/gtfs_realtime_cache.json", "w", encoding="utf-8") as json_f:
+        with open(main_dir + "/gtfs_realtime_cache.json", "w", encoding="utf-8-sig") as json_f:
             json.dump(feed_dict, json_f, ensure_ascii=False, separators=(',', ':'))
     except PermissionError:
         mes("gtfs_realtime_cache.jsonの書き込み権限がありません", True)
@@ -85,7 +85,7 @@ def get_gtfs_realtime (mes, agency_id=None, options=set()):
     else:
         mes("運行情報データの取得", is_heading=True)
     
-    with open("../config/gtfs_realtime_endpoints.json", "r", encoding="utf-8") as json_f:
+    with open("../config/gtfs_realtime_endpoints.json", "r", encoding="utf-8-sig") as json_f:
         endpoints = json.load(json_f)
     
     if agency_id is None:

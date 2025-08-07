@@ -81,7 +81,7 @@ manual_url ユーザーマニュアルのURL
 
 ※このファイルは変換スクリプトにより自動生成されるものである
 {
-    "アイコンID" : アイコン画像のバイナリのBASE64文字列...
+    "アイコン識別名" : アイコン画像のバイナリのBASE64文字列...
 }
 
 
@@ -147,7 +147,7 @@ manual_url ユーザーマニュアルのURL
 
 ※このファイルの大部分は変換スクリプトにより自動生成されるが、一部は手動での入力が必要となる
 {
-    "service_ids" : { ダイヤの一覧
+    "services" : { ダイヤの一覧
         "ダイヤ識別名" : {
             "diagram_name" : ダイヤ表示名,
             "main_color" : 時刻表の背景色
@@ -182,21 +182,21 @@ manual_url ユーザーマニュアルのURL
 ※このファイルは変換スクリプトにより自動生成されるものである
 {
     "operations" : {
-        "運用識別名" : { 各運用の情報
+        "車両行路識別名" : { 各車両行路の情報
             "trips" : [ 各便の情報
                 {
                     "trip_id" : 便識別名,
                     "first_departure_time" : 「HH:MM」形式の始発時刻,
                     "final_arrival_time" : 「HH:MM」形式の終着時刻,
-                    "starting_stop" : 始発停留所,
-                    "terminal_stop" : 終着停留所
+                    "starting_stop" : 始発停留所の停留所識別名,
+                    "terminal_stop" : 終着停留所の停留所識別名
                 }...
             ],
             "starting_time" : 「HH:MM」形式の出庫時刻,
             "ending_time" : 「HH:MM」形式の入庫時刻
         }...
     },
-    "operation_order" : 運用識別名を表示順に配列で
+    "operation_order" : 車両行路識別名を表示順に配列で
 }
 
 

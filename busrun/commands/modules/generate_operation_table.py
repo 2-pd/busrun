@@ -39,8 +39,6 @@ def generate_operation_table (mes, main_dir, date_string):
         
         operation_logs[log_data[0]][timetable[log_data[1]]["departure_times"][0]] = log_data[1]
     
-    conn.close()
-    
     mes("データを整理しています...")
     
     operations = {}
@@ -73,5 +71,16 @@ def generate_operation_table (mes, main_dir, date_string):
     
     with open(main_dir + "/" + diagram_revision + "/" + operation_table_file_name, "w", encoding="utf-8-sig") as json_f:
         json.dump({ "operations" : operations, "operation_order" : operation_order }, json_f, ensure_ascii=False, separators=(',', ':'))
+    
+    mes("運用表をデータベースに登録しています...")
+    
+    cur.execute("DELETE FROM `busrun_trips` WHERE `diagram_revision` = :diagram_revision AND `service_id` = :service_id", {"diagram_revision" : diagram_revision, "service_id" : service_id})
+    
+    for operation_id in operations.keys():
+        for trip in operations[operation_id]["trips"]:
+            cur.execute("INSERT INTO `busrun_trips`(`diagram_revision`, `service_id`, `operation_id`, `trip_id`) VALUES (:diagram_revision, :service_id, :operation_id, :trip_id)", {"diagram_revision" : diagram_revision, "service_id" : service_id, "operation_id" : operation_id, "trip_id" : trip["trip_id"]})
+    
+    conn.commit()
+    conn.close()
     
     mes("処理が完了しました")

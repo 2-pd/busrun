@@ -1,7 +1,6 @@
 # coding: utf-8
 
 import traceback
-import time
 import random
 import urllib.request
 import json
@@ -10,6 +9,7 @@ import sqlite3
 from google.protobuf.json_format import MessageToDict
 
 from modules import gtfs_realtime_pb2
+from modules import diagram_funcs
 
 
 def do_nothing (*args):
@@ -17,9 +17,11 @@ def do_nothing (*args):
 
 
 def get_agency_gtfs_realtime (mes, main_dir, url):
+    diagram = diagram_funcs.diagram(main_dir, mes=mes)
+    
     mes(url + " に接続します...")
     
-    operation_date = time.strftime("%Y-%m-%d")
+    operation_date = diagram.get_date_string()
     
     feed_mes = gtfs_realtime_pb2.FeedMessage()
     

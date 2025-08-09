@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import traceback
+import time
 import random
 import urllib.request
 import json
@@ -68,14 +69,19 @@ def get_agency_gtfs_realtime (mes, main_dir, url):
             trip_id = trip_data["tripUpdate"]["trip"]["tripId"]
             vehicle_name = trip_data["tripUpdate"]["vehicle"]["label"]
             
-            cur.execute("REPLACE INTO `busrun_operation_logs`(`operation_date`, `trip_id`, `vehicle_name`) VALUES (:operation_date, :trip_id, :vehicle_name)", {"operation_date" :operation_date, "trip_id" : trip_data["tripUpdate"]["trip"]["tripId"], "vehicle_name" : trip_data["tripUpdate"]["vehicle"]["label"]})
+            cur.execute("SELECT COUNT(*) FROM `busrun_operation_logs` WHERE `operation_date` = :operation_date AND `trip_id` = :trip_id", {"operation_date" : operation_date, "trip_id" : trip_data["tripUpdate"]["trip"]["tripId"], "vehicle_name" : trip_data["tripUpdate"]["vehicle"]["label"]})
+            
+            if cur.fetchone()[0]:
+                continue
+            
+            cur.execute("INSERT INTO `busrun_operation_logs`(`operation_date`, `trip_id`, `vehicle_name`) VALUES (:operation_date, :trip_id, :vehicle_name)", {"operation_date" : operation_date, "trip_id" : trip_data["tripUpdate"]["trip"]["tripId"], "vehicle_name" : trip_data["tripUpdate"]["vehicle"]["label"]})
         
         conn.commit()
         conn.close()
     except:
         mes("データベースへの記録に失敗しました", True)
     else:
-        mes("記録が完了しました")
+        mes("データベースへの記録が完了しました")
     
     
     return True
@@ -100,3 +106,6 @@ def get_gtfs_realtime (mes, agency_id=None, options=set()):
             get_agency_gtfs_realtime(do_nothing, "../data/" + id_str, endpoints[id_str])
         else:
             get_agency_gtfs_realtime(mes, "../data/" + id_str, endpoints[id_str])
+    
+    if "-s" not in options:
+        mes("全ての処理が完了しました")

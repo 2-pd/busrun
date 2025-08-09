@@ -14,8 +14,8 @@ _/_/_/_/ データベース _/_/_/_/
   `operation_id` TEXT NOT NULL 車両行路識別名
   `trip_id` TEXT NOT NULL 便識別名
 
-  PRIMARY KEY(`diagram_revision`, `service_id`, `operation_id`, `trip_id`)
-  INDEX `busrun_idx_t1`(`diagram_revision`, `service_id`, `trip_id`)
+  PRIMARY KEY(`diagram_revision`, `trip_id`)
+  INDEX `busrun_idx_t1`(`diagram_revision`, `service_id`, `operation_id`, `trip_id`)
 
 
 `busrun_operation_logs` 運用情報ログ

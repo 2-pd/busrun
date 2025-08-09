@@ -60,6 +60,12 @@ if arg_count >= 1:
                 conv_diagram_info.conv_diagram_info(mes, data_dir + "/" + os.path.basename(args[1]), os.path.basename(args[2]))
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
+        case "generate-operation-table":
+            if arg_count == 3:
+                generate_operation_table = importlib.import_module("modules.generate_operation_table")
+                generate_operation_table.generate_operation_table(mes, data_dir + "/" + os.path.basename(args[1]), os.path.basename(args[2]))
+            else:
+                print("\x1b[31m引数の数が異常です\x1b[0m")
         case "init-db":
             if arg_count == 2:
                 init_db = importlib.import_module("modules.init_db")

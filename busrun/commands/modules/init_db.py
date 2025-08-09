@@ -25,7 +25,6 @@ def init_db (mes, main_dir):
     
     mes("テーブル「busrun_operation_logs」を作成しています...")
     cur.execute("CREATE TABLE IF NOT EXISTS `busrun_operation_logs`(`operation_date` TEXT NOT NULL, `trip_id` TEXT NOT NULL, `vehicle_name` TEXT NOT NULL, PRIMARY KEY(`operation_date`, `trip_id`))")
-    cur.execute("CREATE INDEX IF NOT EXISTS `busrun_idx_l1` ON `busrun_operation_logs`(`operation_date`, `vehicle_name`)")
     
     mes("テーブル「busrun_data」を作成しています...")
     cur.execute("CREATE TABLE IF NOT EXISTS `busrun_data`(`operation_date` TEXT NOT NULL, `operation_id` TEXT NOT NULL, `assign_order` INTEGER NOT NULL, `vehicle_name` TEXT NOT NULL, `updated_datetime` TEXT NOT NULL, PRIMARY KEY(`operation_date`, `operation_id`, `assign_order`))")

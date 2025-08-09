@@ -24,7 +24,6 @@ _/_/_/_/ データベース _/_/_/_/
   `vehicle_name` TEXT NOT NULL 車両識別名
 
   PRIMARY KEY(`operation_date`, `trip_id`)
-  INDEX `busrun_idx_l1`(`operation_date`, `vehicle_name`)
 
 
 `busrun_data` 運用データ

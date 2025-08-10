@@ -13,9 +13,10 @@ _/_/_/_/ データベース _/_/_/_/
   `service_id` TEXT NOT NULL ダイヤ識別名
   `operation_id` TEXT NOT NULL 車両行路識別名
   `trip_id` TEXT NOT NULL 便識別名
+  `first_departure_time` TEXT NOT NULL 「HH:MM」形式の始発時刻
 
   PRIMARY KEY(`diagram_revision`, `trip_id`)
-  INDEX `busrun_idx_t1`(`diagram_revision`, `service_id`, `operation_id`, `trip_id`)
+  INDEX `busrun_idx_t1`(`diagram_revision`, `service_id`)
 
 
 `busrun_operation_logs` 運用情報ログ

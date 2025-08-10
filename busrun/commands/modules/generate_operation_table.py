@@ -78,7 +78,7 @@ def generate_operation_table (mes, main_dir, date_string):
     
     for operation_id in operations.keys():
         for trip in operations[operation_id]["trips"]:
-            cur.execute("INSERT INTO `busrun_trips`(`diagram_revision`, `service_id`, `operation_id`, `trip_id`) VALUES (:diagram_revision, :service_id, :operation_id, :trip_id)", {"diagram_revision" : diagram_revision, "service_id" : service_id, "operation_id" : operation_id, "trip_id" : trip["trip_id"]})
+            cur.execute("INSERT INTO `busrun_trips`(`diagram_revision`, `service_id`, `operation_id`, `trip_id`, `first_departure_time`) VALUES (:diagram_revision, :service_id, :operation_id, :trip_id, :first_departure_time)", {"diagram_revision" : diagram_revision, "service_id" : service_id, "operation_id" : operation_id, "trip_id" : trip["trip_id"], "first_departure_time" : trip["first_departure_time"]})
     
     conn.commit()
     conn.close()

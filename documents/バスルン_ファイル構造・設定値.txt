@@ -114,6 +114,7 @@ manual_url ユーザーマニュアルのURL
     "stops" : { 停留所の一覧
         "停留所識別名" : {
             "stop_name" : 停留所表示名,
+            "stop_name_kana" : 停留所表示名,
             "stop_lat" : 停留所中心点の緯度,
             "stop_lon" : 停留所中心点の経度,
             "platforms" : { 乗り場の一覧

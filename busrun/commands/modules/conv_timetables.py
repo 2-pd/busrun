@@ -18,6 +18,11 @@ def conv_timetables (mes, main_dir, diagram_revision):
         dict_reader = csv.DictReader(csv_f)
         routes = [data_row for data_row in dict_reader]
     
+    mes("translations.txtを読み込んでいます...")
+    with open(main_dir + "/" + diagram_revision + "/translations.txt", "r", encoding="utf-8-sig") as csv_f:
+        dict_reader = csv.DictReader(csv_f)
+        translations = [data_row for data_row in dict_reader]
+    
     mes("trips.txtを読み込んでいます...")
     with open(main_dir + "/" + diagram_revision + "/trips.txt", "r", encoding="utf-8-sig") as csv_f:
         dict_reader = csv.DictReader(csv_f)
@@ -29,6 +34,24 @@ def conv_timetables (mes, main_dir, diagram_revision):
         stop_times = [data_row for data_row in dict_reader]
     
     
+    mes("読み仮名情報を整理しています...")
+    
+    translation_data = {}
+    
+    katakana = "".join(chr(i) for i in range(0x30A1, 0x30F7))
+    hiragana = "".join(chr(i) for i in range(0x3041, 0x3097))
+    katakana_to_hiragana = str.maketrans(katakana, hiragana)
+    
+    for translation in translations:
+        if translation["trans_id"] not in translation_data:
+            translation_data[translation["trans_id"]] = {}
+        
+        if translation["lang"] == "ja-Hrkt":
+            translation_data[translation["trans_id"]][translation["lang"]] = translation["translation"].translate(katakana_to_hiragana)
+        else:
+            translation_data[translation["trans_id"]][translation["lang"]] = translation["translation"]
+    
+    
     mes("停留所情報を変換しています...")
     
     route_info = {"stops" : {}, "routes" : {}, "major_stops" : []}
@@ -37,7 +60,7 @@ def conv_timetables (mes, main_dir, diagram_revision):
     for stop_data in stops:
         if int(stop_data["location_type"]):
             if stop_data["stop_id"] not in route_info["stops"]:
-                route_info["stops"][stop_data["stop_id"]] = { "stop_name" : stop_data["stop_name"], "stop_lat" : float(stop_data["stop_lat"]), "stop_lon" : float(stop_data["stop_lon"]), "platforms" : {} }
+                route_info["stops"][stop_data["stop_id"]] = { "stop_name" : stop_data["stop_name"], "stop_name_kana" : translation_data[stop_data["stop_name"]]["ja-Hrkt"], "stop_lat" : float(stop_data["stop_lat"]), "stop_lon" : float(stop_data["stop_lon"]), "platforms" : {} }
         else:
             if len(stop_data["parent_station"]) >= 1:
                 stop_id = stop_data["parent_station"]
@@ -45,7 +68,7 @@ def conv_timetables (mes, main_dir, diagram_revision):
                 stop_id = stop_data["stop_id"][:stop_data["stop_id"].rfind("_")]
             
             if stop_id not in route_info["stops"]:
-                route_info["stops"][stop_id] = { "stop_name" : stop_data["stop_name"], "stop_lat" : None, "stop_lon" : None, "platforms" : {} }
+                route_info["stops"][stop_id] = { "stop_name" : stop_data["stop_name"], "stop_name_kana" : translation_data[stop_data["stop_name"]]["ja-Hrkt"], "stop_lat" : None, "stop_lon" : None, "platforms" : {} }
             
             if len(stop_data["platform_code"]) >= 1:
                 platform_code = stop_data["platform_code"]

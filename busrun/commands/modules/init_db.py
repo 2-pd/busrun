@@ -20,8 +20,8 @@ def init_db (mes, main_dir):
     cur = conn.cursor()
     
     mes("テーブル「busrun_trips」を作成しています...")
-    cur.execute("CREATE TABLE IF NOT EXISTS `busrun_trips`(`diagram_revision` TEXT NOT NULL, `service_id` TEXT NOT NULL, `operation_id` TEXT NOT NULL, `trip_id` TEXT NOT NULL, PRIMARY KEY(`diagram_revision`, `trip_id`))")
-    cur.execute("CREATE INDEX IF NOT EXISTS `busrun_idx_t1` ON `busrun_trips`(`diagram_revision`, `service_id`, `operation_id`, `trip_id`)")
+    cur.execute("CREATE TABLE IF NOT EXISTS `busrun_trips`(`diagram_revision` TEXT NOT NULL, `service_id` TEXT NOT NULL, `operation_id` TEXT NOT NULL, `trip_id` TEXT NOT NULL, `first_departure_time` TEXT NOT NULL, PRIMARY KEY(`diagram_revision`, `trip_id`))")
+    cur.execute("CREATE INDEX IF NOT EXISTS `busrun_idx_t1` ON `busrun_trips`(`diagram_revision`, `service_id`)")
     
     mes("テーブル「busrun_operation_logs」を作成しています...")
     cur.execute("CREATE TABLE IF NOT EXISTS `busrun_operation_logs`(`operation_date` TEXT NOT NULL, `trip_id` TEXT NOT NULL, `vehicle_name` TEXT NOT NULL, PRIMARY KEY(`operation_date`, `trip_id`))")

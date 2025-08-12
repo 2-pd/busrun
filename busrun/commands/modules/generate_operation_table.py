@@ -77,8 +77,12 @@ def generate_operation_table (mes, main_dir, date_string):
     cur.execute("DELETE FROM `busrun_trips` WHERE `diagram_revision` = :diagram_revision AND `service_id` = :service_id", {"diagram_revision" : diagram_revision, "service_id" : service_id})
     
     for operation_id in operations.keys():
+        trip_sequence = 1
+        
         for trip in operations[operation_id]["trips"]:
-            cur.execute("INSERT INTO `busrun_trips`(`diagram_revision`, `service_id`, `operation_id`, `trip_id`, `first_departure_time`) VALUES (:diagram_revision, :service_id, :operation_id, :trip_id, :first_departure_time)", {"diagram_revision" : diagram_revision, "service_id" : service_id, "operation_id" : operation_id, "trip_id" : trip["trip_id"], "first_departure_time" : trip["first_departure_time"]})
+            cur.execute("INSERT INTO `busrun_trips`(`diagram_revision`, `service_id`, `operation_id`, `trip_sequence`, `trip_id`) VALUES (:diagram_revision, :service_id, :operation_id, :trip_sequence, :trip_id)", {"diagram_revision" : diagram_revision, "service_id" : service_id, "operation_id" : operation_id, "trip_sequence" : trip_sequence, "trip_id" : trip["trip_id"]})
+            
+            trip_sequence += 1
     
     conn.commit()
     conn.close()

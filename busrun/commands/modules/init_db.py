@@ -20,16 +20,16 @@ def init_db (mes, main_dir):
     cur = conn.cursor()
     
     mes("テーブル「busrun_trips」を作成しています...")
-    cur.execute("CREATE TABLE IF NOT EXISTS `busrun_trips`(`diagram_revision` TEXT NOT NULL, `service_id` TEXT NOT NULL, `operation_id` TEXT NOT NULL, `trip_id` TEXT NOT NULL, `first_departure_time` TEXT NOT NULL, PRIMARY KEY(`diagram_revision`, `trip_id`))")
+    cur.execute("CREATE TABLE IF NOT EXISTS `busrun_trips`(`diagram_revision` TEXT NOT NULL, `service_id` TEXT NOT NULL, `operation_id` TEXT NOT NULL, `trip_sequence` INTEGER NOT NULL, `trip_id` TEXT NOT NULL, PRIMARY KEY(`diagram_revision`, `trip_id`))")
     cur.execute("CREATE INDEX IF NOT EXISTS `busrun_idx_t1` ON `busrun_trips`(`diagram_revision`, `service_id`)")
     
     mes("テーブル「busrun_operation_logs」を作成しています...")
     cur.execute("CREATE TABLE IF NOT EXISTS `busrun_operation_logs`(`operation_date` TEXT NOT NULL, `trip_id` TEXT NOT NULL, `vehicle_name` TEXT NOT NULL, PRIMARY KEY(`operation_date`, `trip_id`))")
     
     mes("テーブル「busrun_data」を作成しています...")
-    cur.execute("CREATE TABLE IF NOT EXISTS `busrun_data`(`operation_date` TEXT NOT NULL, `operation_id` TEXT NOT NULL, `assign_order` INTEGER NOT NULL, `vehicle_name` TEXT NOT NULL, `updated_datetime` TEXT NOT NULL, PRIMARY KEY(`operation_date`, `operation_id`, `assign_order`))")
+    cur.execute("CREATE TABLE IF NOT EXISTS `busrun_data`(`operation_date` TEXT NOT NULL, `operation_id` TEXT NOT NULL, `assign_order` INTEGER NOT NULL, `vehicle_name` TEXT NOT NULL, `latest_trip_sequence` INTEGER NOT NULL, `change_datetime` TEXT NOT NULL, PRIMARY KEY(`operation_date`, `operation_id`, `assign_order`))")
     cur.execute("CREATE INDEX IF NOT EXISTS `busrun_idx_d1` ON `busrun_data`(`vehicle_name`, `operation_date`, `operation_id`)")
-    cur.execute("CREATE INDEX IF NOT EXISTS `busrun_idx_d2` ON `busrun_data`(`operation_date`, `updated_datetime`, `operation_id`, `assign_order`)")
+    cur.execute("CREATE INDEX IF NOT EXISTS `busrun_idx_d2` ON `busrun_data`(`operation_date`, `change_datetime`, `operation_id`, `assign_order`)")
     cur.execute("CREATE INDEX IF NOT EXISTS `busrun_idx_d3` ON `busrun_data`(`operation_id`, `operation_date`, `assign_order`)")
     
     mes("変更を保存しています...")

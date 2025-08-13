@@ -91,16 +91,22 @@ manual_url ユーザーマニュアルのURL
 {
     "vehicles" : {
         "車両識別名": { 各車両の情報
-            "icon_id" : アイコンのID,
+            "icon_id" : アイコン識別名,
             "registration_number" : 自動車登録番号,
             "model_name" : 車種名,
             "model_year" : 年式,
+            "notes" : 補足文,
             "office_name" : 所属営業所名
         }...
     },
     "offices" : {
         "営業所名" : {
-            "vehicle_names" : 車両識別名を配列で
+            "vehicle_categories" : [ 車両の区分
+                {
+                    "category_name" : 区分名,
+                    "vehicle_names" : 車両識別名を配列で
+                }...
+            ]
         }...
     },
     "office_names" : 営業所名を配列で

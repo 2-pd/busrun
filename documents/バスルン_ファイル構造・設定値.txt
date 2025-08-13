@@ -95,8 +95,8 @@ manual_url ユーザーマニュアルのURL
             "registration_number" : 自動車登録番号,
             "model_name" : 車種名,
             "model_year" : 年式,
-            "notes" : 補足文,
-            "office_name" : 所属営業所名
+            "office_name" : 所属営業所名,
+            "notes" : 補足文(省略可能)
         }...
     },
     "offices" : {

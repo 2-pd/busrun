@@ -48,6 +48,12 @@ if arg_count >= 1:
                     get_gtfs_realtime.get_gtfs_realtime(mes, args[1], options=options)
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
+        case "conv-vehicles":
+            if arg_count == 2:
+                conv_vehicles = importlib.import_module("modules.conv_vehicles")
+                conv_vehicles.conv_vehicles(mes, data_dir + "/" + os.path.basename(args[1]))
+            else:
+                print("\x1b[31m引数の数が異常です\x1b[0m")
         case "conv-timetables":
             if arg_count == 3:
                 conv_timetables = importlib.import_module("modules.conv_timetables")

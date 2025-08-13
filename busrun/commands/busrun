@@ -48,6 +48,12 @@ if arg_count >= 1:
                     get_gtfs_realtime.get_gtfs_realtime(mes, args[1], options=options)
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
+        case "embed-icons":
+            if arg_count == 2:
+                embed_icons = importlib.import_module("modules.embed_icons")
+                embed_icons.embed_icons(mes, data_dir + "/" + os.path.basename(args[1]))
+            else:
+                print("\x1b[31m引数の数が異常です\x1b[0m")
         case "conv-vehicles":
             if arg_count == 2:
                 conv_vehicles = importlib.import_module("modules.conv_vehicles")

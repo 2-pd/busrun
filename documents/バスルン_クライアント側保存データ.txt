@@ -71,13 +71,23 @@ _/_/_/_/ クライアント側IndexedDB "busrun_caches" _/_/_/_/
 }
 
 
-███ route_info ███
+███ stops ███
 
 {
     ・agency_id : 事業者識別名,
     ・diagram_revision : ダイヤ改正識別名,
     last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
-    以降の項目はroute_info.phpのレスポンスをパースしてそのまま展開して使用
+    以降の項目はstops.phpのレスポンスをパースしてそのまま展開して使用
+}
+
+
+███ routes ███
+
+{
+    ・agency_id : 事業者識別名,
+    ・diagram_revision : ダイヤ改正識別名,
+    last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
+    routes : routes.phpのレスポンスをパースしてそのまま格納
 }
 
 

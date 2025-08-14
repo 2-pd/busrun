@@ -54,48 +54,49 @@ def conv_timetables (mes, main_dir, diagram_revision):
     
     mes("停留所情報を変換しています...")
     
-    route_info = {"stops" : {}, "routes" : {}, "major_stops" : []}
+    stop_info = { "stops" : {}, "major_stops" : [] }
+    route_info = {}
     parent_stations = {}
     
     for stop_data in stops:
         if int(stop_data["location_type"]):
-            if stop_data["stop_id"] not in route_info["stops"]:
-                route_info["stops"][stop_data["stop_id"]] = { "stop_name" : stop_data["stop_name"], "stop_name_kana" : translation_data[stop_data["stop_name"]]["ja-Hrkt"], "stop_lat" : float(stop_data["stop_lat"]), "stop_lon" : float(stop_data["stop_lon"]), "platforms" : {} }
+            if stop_data["stop_id"] not in stop_info["stops"]:
+                stop_info["stops"][stop_data["stop_id"]] = { "stop_name" : stop_data["stop_name"], "stop_name_kana" : translation_data[stop_data["stop_name"]]["ja-Hrkt"], "stop_lat" : float(stop_data["stop_lat"]), "stop_lon" : float(stop_data["stop_lon"]), "platforms" : {} }
         else:
             if len(stop_data["parent_station"]) >= 1:
                 stop_id = stop_data["parent_station"]
             else:
                 stop_id = stop_data["stop_id"][:stop_data["stop_id"].rfind("_")]
             
-            if stop_id not in route_info["stops"]:
-                route_info["stops"][stop_id] = { "stop_name" : stop_data["stop_name"], "stop_name_kana" : translation_data[stop_data["stop_name"]]["ja-Hrkt"], "stop_lat" : None, "stop_lon" : None, "platforms" : {} }
+            if stop_id not in stop_info["stops"]:
+                stop_info["stops"][stop_id] = { "stop_name" : stop_data["stop_name"], "stop_name_kana" : translation_data[stop_data["stop_name"]]["ja-Hrkt"], "stop_lat" : None, "stop_lon" : None, "platforms" : {} }
             
             if len(stop_data["platform_code"]) >= 1:
                 platform_code = stop_data["platform_code"]
             else:
-                platform_code = chr(ord("A") + len(route_info["stops"][stop_id]["platforms"]))
+                platform_code = chr(ord("A") + len(stop_info["stops"][stop_id]["platforms"]))
             
-            route_info["stops"][stop_id]["platforms"][stop_data["stop_id"]] = { "platform_code" : platform_code }
+            stop_info["stops"][stop_id]["platforms"][stop_data["stop_id"]] = { "platform_code" : platform_code }
             
             parent_stations[stop_data["stop_id"]] = stop_id
             
-            if route_info["stops"][stop_id]["stop_lat"] is None:
-                route_info["stops"][stop_id]["platforms"][stop_data["stop_id"]]["stop_lat"] = float(stop_data["stop_lat"])
-                route_info["stops"][stop_id]["platforms"][stop_data["stop_id"]]["stop_lon"] = float(stop_data["stop_lon"])
+            if stop_info["stops"][stop_id]["stop_lat"] is None:
+                stop_info["stops"][stop_id]["platforms"][stop_data["stop_id"]]["stop_lat"] = float(stop_data["stop_lat"])
+                stop_info["stops"][stop_id]["platforms"][stop_data["stop_id"]]["stop_lon"] = float(stop_data["stop_lon"])
     
-    for stop_id in route_info["stops"].keys():
-        if route_info["stops"][stop_id]["stop_lat"] is None:
+    for stop_id in stop_info["stops"].keys():
+        if stop_info["stops"][stop_id]["stop_lat"] is None:
             lat_sum = 0.0
             lon_sum = 0.0
             
-            for platform_id in route_info["stops"][stop_id]["platforms"].keys():
-                lat_sum += route_info["stops"][stop_id]["platforms"][platform_id].pop("stop_lat")
-                lon_sum += route_info["stops"][stop_id]["platforms"][platform_id].pop("stop_lon")
+            for platform_id in stop_info["stops"][stop_id]["platforms"].keys():
+                lat_sum += stop_info["stops"][stop_id]["platforms"][platform_id].pop("stop_lat")
+                lon_sum += stop_info["stops"][stop_id]["platforms"][platform_id].pop("stop_lon")
             
-            platform_count = len(route_info["stops"][stop_id]["platforms"])
+            platform_count = len(stop_info["stops"][stop_id]["platforms"])
             
-            route_info["stops"][stop_id]["stop_lat"] = round(lat_sum / platform_count, 5)
-            route_info["stops"][stop_id]["stop_lon"] = round(lon_sum / platform_count, 5)
+            stop_info["stops"][stop_id]["stop_lat"] = round(lat_sum / platform_count, 5)
+            stop_info["stops"][stop_id]["stop_lon"] = round(lon_sum / platform_count, 5)
     
     
     mes("時刻表情報を変換しています...")
@@ -163,29 +164,34 @@ def conv_timetables (mes, main_dir, diagram_revision):
     alighting_only_platforms = alighting_platforms - boarding_platforms
     
     for platform_id in alighting_only_platforms:
-        route_info["stops"][parent_stations[platform_id]]["platforms"][platform_id]["alighting_only"] = True
+        stop_info["stops"][parent_stations[platform_id]]["platforms"][platform_id]["alighting_only"] = True
     
     
     mes("系統情報を変換しています...")
     
     for route in routes:
-        route_info["routes"][route["route_id"]] = { "route_number" : route["route_short_name"], "route_name" : route["route_long_name"], "route_desc" : route["route_desc"], "stops" : route_stops.get(route["route_id"], []) }
+        route_info[route["route_id"]] = { "route_number" : route["route_short_name"], "route_name" : route["route_long_name"], "route_desc" : route["route_desc"], "stops" : route_stops.get(route["route_id"], []) }
         
         if len(route["route_color"]) >= 1:
-            route_info["routes"][route["route_id"]]["route_color"] = route["route_color"]
-            route_info["routes"][route["route_id"]]["route_text_color"] = route["route_text_color"]
+            route_info[route["route_id"]]["route_color"] = route["route_color"]
+            route_info[route["route_id"]]["route_text_color"] = route["route_text_color"]
         else:
-            route_info["routes"][route["route_id"]]["route_color"] = None
-            route_info["routes"][route["route_id"]]["route_text_color"] = None
+            route_info[route["route_id"]]["route_color"] = None
+            route_info[route["route_id"]]["route_text_color"] = None
         
         if len(route["route_short_name"]) == 0:
             bracket_pos = route["route_long_name"].rfind("【")
             
             if bracket_pos != -1:
-                route_info["routes"][route["route_id"]]["route_name"] = route["route_long_name"][:bracket_pos]
-                route_info["routes"][route["route_id"]]["route_number"] = route["route_long_name"][bracket_pos + 1:-1]
+                route_info[route["route_id"]]["route_name"] = route["route_long_name"][:bracket_pos]
+                route_info[route["route_id"]]["route_number"] = route["route_long_name"][bracket_pos + 1:-1]
             else:
-                route_info["routes"][route["route_id"]]["route_number"] = None
+                route_info[route["route_id"]]["route_number"] = None
+    
+    
+    mes("stop_info.jsonに保存しています...")
+    with open(main_dir + "/" + diagram_revision + "/stop_info.json", "w", encoding="utf-8-sig") as json_f:
+        json.dump(stop_info, json_f, ensure_ascii=False, indent=4)
     
     
     mes("route_info.jsonに保存しています...")

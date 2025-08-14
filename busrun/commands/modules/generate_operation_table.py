@@ -53,7 +53,7 @@ def generate_operation_table (mes, main_dir, date_string):
         
         for departure_time in departure_times:
             trip_id = operation_logs[vehicle_name][departure_time]
-            route_stops = route_info["routes"][timetable[trip_id]["route_id"]]["stops"]
+            route_stops = route_info[timetable[trip_id]["route_id"]]["stops"]
             
             if int(timetable[trip_id]["direction_id"]):
                 route_stops.reverse()

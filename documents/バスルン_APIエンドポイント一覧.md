@@ -130,8 +130,8 @@ diagram_revisions.txtの各行の文字列を要素とする配列をJSON化し�
 文字列「ERROR: 」とそれに続くエラー内容文
 
 
-## stops.php
-指定した事業者の指定したダイヤ改正時点での路線・停留所情報を取得する
+## stop_info.php
+指定した事業者の指定したダイヤ改正時点での停留所情報を取得する
 
 ### 引数
 **$_POST["agency_id"]** : 事業者識別名  
@@ -139,21 +139,21 @@ diagram_revisions.txtの各行の文字列を要素とする配列をJSON化し�
 **$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC)
 
 ### 応答
-**stops.jsonの変更日時がタイムスタンプより新しかった場合** :  
-stops.jsonの内容を返す  
+**stop_info.jsonの変更日時がタイムスタンプより新しかった場合** :  
+stop_info.jsonの内容を返す  
 ▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
   
-※上記の他、**Last-Modified**レスポンスヘッダーにstops.jsonの最終更新日時が出力される  
+※上記の他、**Last-Modified**レスポンスヘッダーにstop_info.jsonの最終更新日時が出力される  
   
-**stops.jsonの変更日時がタイムスタンプ以前だった場合** :  
+**stop_info.jsonの変更日時がタイムスタンプ以前だった場合** :  
 文字列「NO_UPDATES_AVAILABLE」  
   
 **エラーの場合** :  
 文字列「ERROR: 」とそれに続くエラー内容文
 
 
-## routes.php
-指定した事業者の指定したダイヤ改正時点での路線・停留所情報を取得する
+## route_info.php
+指定した事業者の指定したダイヤ改正時点での系統情報を取得する
 
 ### 引数
 **$_POST["agency_id"]** : 事業者識別名  
@@ -161,13 +161,13 @@ stops.jsonの内容を返す
 **$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC)
 
 ### 応答
-**routes.jsonの変更日時がタイムスタンプより新しかった場合** :  
-routes.jsonの内容を返す  
+**route_info.jsonの変更日時がタイムスタンプより新しかった場合** :  
+route_info.jsonの内容を返す  
 ▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
   
-※上記の他、**Last-Modified**レスポンスヘッダーにroutes.jsonの最終更新日時が出力される  
+※上記の他、**Last-Modified**レスポンスヘッダーにroute_info.jsonの最終更新日時が出力される  
   
-**routes.jsonの変更日時がタイムスタンプ以前だった場合** :  
+**route_info.jsonの変更日時がタイムスタンプ以前だった場合** :  
 文字列「NO_UPDATES_AVAILABLE」  
   
 **エラーの場合** :  

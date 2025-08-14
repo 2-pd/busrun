@@ -32,8 +32,8 @@ _/_/_/_/ ファイル構成 _/_/_/_/
       └ vehicles.json ・・・JSONに変換された車両一覧表
       └ diagram_revisions.txt ・・・ダイヤ改正識別名(「YYYY-MM-DD」形式)を新しいものから順に1行に1つずつ記載したテキストファイル
       └ ****/ ・・・フォルダ名は各ダイヤ改正識別名を使用
-         └ stops.json ・・・停留所情報
-         └ routes.json ・・・系統情報
+         └ stop_info.json ・・・停留所情報
+         └ route_info.json ・・・系統情報
          └ diagram_info.json ・・・各改正日のダイヤに属するダイヤの情報
          └ operation_table_****.json ・・・JSONに変換された各ダイヤの運用表データ
          └ timetable_****.json ・・・JSONに変換された各ダイヤの時刻表データ

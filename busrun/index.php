@@ -164,6 +164,8 @@ print "        const BUSRUN_LICENSE_TEXT = \"".BUSRUN_LICENSE_TEXT."\";\n";
 print "    </script>\n";
 print "    <script src=\"/main.js?v=".BUSRUN_VERSION."\" defer=\"defer\"></script>\n";
 ?>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.webp">
     <link rel="manifest" href="/manifest.json">
 <?php
 print "    <link rel=\"canonical\" href=\"".$root_url.$path_info_str."\">\n";

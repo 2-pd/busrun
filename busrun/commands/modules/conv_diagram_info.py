@@ -42,7 +42,7 @@ def conv_diagram_info (mes, main_dir, diagram_revision):
         diagram_info["services"][service_id] = { "service_name" : "名称未設定ダイヤ", "main_color" : "#cccccc" }
     
     mes("diagram_info.jsonに保存しています...")
-    with open(main_dir + "/" + diagram_revision + "/diagram_info.json", "w", encoding="utf-8-sig") as json_f:
+    with open(main_dir + "/" + diagram_revision + "/diagram_info.json", "w", encoding="utf-8") as json_f:
         json.dump(diagram_info, json_f, ensure_ascii=False, indent=4)
     
     mes("処理が完了しました")

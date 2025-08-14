@@ -190,12 +190,12 @@ def conv_timetables (mes, main_dir, diagram_revision):
     
     
     mes("stop_info.jsonに保存しています...")
-    with open(main_dir + "/" + diagram_revision + "/stop_info.json", "w", encoding="utf-8-sig") as json_f:
+    with open(main_dir + "/" + diagram_revision + "/stop_info.json", "w", encoding="utf-8") as json_f:
         json.dump(stop_info, json_f, ensure_ascii=False, indent=4)
     
     
     mes("route_info.jsonに保存しています...")
-    with open(main_dir + "/" + diagram_revision + "/route_info.json", "w", encoding="utf-8-sig") as json_f:
+    with open(main_dir + "/" + diagram_revision + "/route_info.json", "w", encoding="utf-8") as json_f:
         json.dump(route_info, json_f, ensure_ascii=False, separators=(',', ':'))
     
     
@@ -204,7 +204,7 @@ def conv_timetables (mes, main_dir, diagram_revision):
         
         mes(timetable_file_name + "に保存しています...")
         
-        with open(main_dir + "/" + diagram_revision + "/" + timetable_file_name, "w", encoding="utf-8-sig") as json_f:
+        with open(main_dir + "/" + diagram_revision + "/" + timetable_file_name, "w", encoding="utf-8") as json_f:
             json.dump(timetables[service_id], json_f, ensure_ascii=False, separators=(',', ':'))
     
     

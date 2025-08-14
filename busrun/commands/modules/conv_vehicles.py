@@ -54,7 +54,7 @@ def conv_vehicles (mes, main_dir):
     
     mes("vehicles.jsonを作成しています...")
     try:
-        with open(main_dir + "/vehicles.json", "w", encoding="utf-8-sig") as json_f:
+        with open(main_dir + "/vehicles.json", "w", encoding="utf-8") as json_f:
             json.dump(json_data, json_f, ensure_ascii=False, separators=(',', ':'))
     except PermissionError:
         mes("vehicles.jsonの書き込み権限がありません", True)

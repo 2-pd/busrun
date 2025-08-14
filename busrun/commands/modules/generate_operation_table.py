@@ -69,7 +69,7 @@ def generate_operation_table (mes, main_dir, date_string):
     
     mes(operation_table_file_name + "に保存しています...")
     
-    with open(main_dir + "/" + diagram_revision + "/" + operation_table_file_name, "w", encoding="utf-8-sig") as json_f:
+    with open(main_dir + "/" + diagram_revision + "/" + operation_table_file_name, "w", encoding="utf-8") as json_f:
         json.dump({ "operations" : operations, "operation_order" : operation_order }, json_f, ensure_ascii=False, separators=(',', ':'))
     
     mes("運用表をデータベースに登録しています...")

@@ -154,6 +154,18 @@ print "    <title>".htmlspecialchars($page_title)."</title>\n";
 $root_url = "http".(empty($_SERVER["HTTPS"]) ? "" : "s")."://".$_SERVER["HTTP_HOST"];
 $page_description = addslashes($page_description);
 
+print "    <link rel=\"stylesheet\" href=\"/assets.css?v=".BUSRUN_VERSION."\">\n";
+print "    <script>\n";
+print "        const BUSRUN_APP_NAME = \"".BUSRUN_APP_NAME."\";\n";
+print "        const BUSRUN_VERSION = \"".BUSRUN_VERSION."\";\n";
+print "        const BUSRUN_APP_INFO_URL = \"".BUSRUN_APP_INFO_URL."\";\n";
+print "        const BUSRUN_REPOSITORY_URL = \"".BUSRUN_REPOSITORY_URL."\";\n";
+print "        const BUSRUN_LICENSE_TEXT = \"".BUSRUN_LICENSE_TEXT."\";\n";
+print "    </script>\n";
+print "    <script src=\"/main.js?v=".BUSRUN_VERSION."\" defer=\"defer\"></script>\n";
+?>
+    <link rel="manifest" href="/manifest.json">
+<?php
 print "    <link rel=\"canonical\" href=\"".$root_url.$path_info_str."\">\n";
 print "    <meta name=\"description\" content=\"".$page_description."\">\n";
 ?>

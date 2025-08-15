@@ -22,3 +22,137 @@ html, body {
     
     overscroll-behavior-y: none;
 }
+
+*[onclick], a, :is(*[onclick], a) *, button, label {
+    cursor: pointer;
+    
+    -webkit-tap-highlight-color: rgba(153, 153, 153, 0.2);
+}
+
+:is(*[onclick], a, button,label):hover, :is(*[onclick], a):hover * {
+    text-decoration: none !important;
+}
+
+button {
+    box-sizing: content-box;
+    
+    padding: 0;
+    
+    border: none;
+    
+    background-color: transparent;
+    
+    text-align: inherit;
+}
+
+header {
+    position: relative;
+    
+    height: 70px;
+    
+    background-color: #f7f7f7;
+    
+    line-height: 25px;
+    font-size: 14px;
+    color: #666666;
+    text-indent: 10px;
+    
+    box-shadow: 0 0 3px 3px rgba(0,0,0,0.2);
+    
+    z-index: 33;
+}
+
+#header_instance_name {
+    font-size: 16px;
+}
+
+#header_agency_name {
+    position: absolute;
+    
+    top: 25px;
+    left: 0;
+    
+    width: calc(100vw - 50px);
+    height: 45px;
+    
+    border-radius: 0 22.5px 22.5px 0;
+}
+
+#menu_button {
+    position: absolute;
+    
+    top: 0;
+    right: 0;
+    
+    width: 50px;
+    height: 70px;
+    
+    background-image: url(data:image/webp;base64,UklGRigBAABXRUJQVlA4TBsBAAAvY8AiEDeBpm0jOfyZHLmffyoNNG0byeHP5Mj9/FPRtG0khz+TI/fzT1UUSVJT5CAHKUjAFZLwwZ9vZuLu7HsPbHyACQBABwAPYOFj4oNtEhGtEpAQkJgViEgo2+S2t01iVLkC8v9f4TaSJEU6Zmbmu/HfxYdZpfekh4j+M3IbSZGrBxZv/AT685i58kzTK1dkV6trLzEaBbclGpMctgaNTY16hM4zJkyVJkiHyRXxMVkiNiZbxLnvhVKkx7QaghMthJmGVxEoJeVkKsFWbbxtrVQCztT5luX3C30U5joj04z2C9oWaC8JN+T5o73VhevUmBy4Rk6By+JYUnDufWGXYpcrZE6kIF/7oQTXPpFyFJYVH8pv6v+Yf+wQAA==);
+    background-size: 50px 70px;
+}
+
+.menu_button_active {
+    background-color: #cccccc !important;
+}
+
+#menu {
+    position: absolute;
+    top: 70px;
+    right: 0;
+    
+    width: 250px;
+    max-height: 0;
+    
+    opacity: 0.5;
+    
+    background-color: #ffffff;
+    
+    line-height: 40px;
+    
+    overflow-y: scroll;
+    
+    z-index: 35;
+    
+    transition-duration: 0.25s;
+    transition-property: all;
+}
+
+.menu_open {
+    max-height: none !important;
+    
+    opacity: 1.0 !important;
+    
+    padding: 9px 0;
+
+    border: 1px solid #cccccc;
+    
+    box-shadow: 0 4px 4px 0 rgba(0,0,0,0.2);
+}
+
+#menu :is(button, a) {
+    display: block;
+    
+    width: 100%;
+    height: 40px;
+    
+    line-height: 40px;
+    font-size: 15px;
+    color: inherit;
+    text-align: center;
+    text-decoration: none;
+}
+
+#menu hr {
+    width: 90%;
+    height: 2px;
+    
+    margin: 9px auto;
+    
+    border: none;
+    
+    background-color: #dddddd;
+}
+
+#menu_reload_button:after {
+    content: "の再読み込み";
+}

@@ -173,5 +173,14 @@ print "    <meta name=\"description\" content=\"".$page_description."\">\n";
 ?>
 </head>
 <body>
+    <header>路線バスファンアプリ <b id="header_instance_name"><?php print BUSRUN_APP_NAME; ?></b><button type="button" id="header_agency_name"></button><button type="button" id="menu_button" onclick="menu_click();" aria-label="メニュー"></button></header>
+    <nav id="menu">
+        <button type="button" onclick="show_config();">アプリの設定</button>
+        <hr>
+        <button type="button" onclick="show_about();"><span id="menu_instance_name"><?php print BUSRUN_APP_NAME; ?></span>について</button>
+        <a id="menu_manual_button" href="#" target="_blank">このアプリの使い方</a>
+        <hr>
+        <a id="menu_reload_button" href="/" onclick="event.preventDefault(); reload_app();"><?php print BUSRUN_APP_NAME; ?></a>
+    </nav>
 </body>
 </html>

@@ -182,6 +182,20 @@ print "    <meta name=\"description\" content=\"".$page_description."\">\n";
         <hr>
         <a id="menu_reload_button" href="/" onclick="event.preventDefault(); reload_app();"><?php print BUSRUN_APP_NAME; ?></a>
     </nav>
+    <div id="splash_screen">
+<?php
+if ($path_info_str === "/") {
+    $busrun_app_name = BUSRUN_APP_NAME;
+    $busrun_version = BUSRUN_VERSION;
+    print <<<EOM
+            <div id="splash_screen_inner"></div>
+            <div id="splash_screen_bottom">
+                <u onclick="show_about();"><span id="splash_screen_instance_name">{$busrun_app_name}</span>について</u><span id="splash_screen_app_version">v{$busrun_version}</span>
+            </div>
+    EOM."\n";
+}
+?>
+    </div>
     <div id="message_area"></div>
 </body>
 </html>

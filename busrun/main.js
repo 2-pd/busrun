@@ -42,6 +42,16 @@ var config = {};
 }());
 
 
+function get_timestamp () {
+    return Math.floor(Date.now() / 1000);
+}
+
+function get_date_string (ts) {
+    var dt = new Date((ts - 14400) * 1000);
+    return dt.getFullYear() + "-" + ("0" + String(dt.getMonth() + 1)).slice(-2) + "-" + ("0" + dt.getDate()).slice(-2);
+}
+
+
 var message_area_elm = document.getElementById("message_area");
 var message_elm_list = [];
 
@@ -165,7 +175,7 @@ var db_open_promise = new Promise(function (resolve, reject) {
             var cursor = cursor_request.result;
             
             if (cursor !== null) {
-                operation_data_store.delete([cursor.value["railroad_id"], cursor.value["operation_date"]]);
+                operation_data_store.delete([cursor.value["agency_id"], cursor.value["operation_date"]]);
                 cursor.continue();
             }
             
@@ -174,6 +184,93 @@ var db_open_promise = new Promise(function (resolve, reject) {
     };
 });
 
+
+function ajax_post (end_point_name, query_str, callback_func, timeout = 30) {
+    var ajax_request = new XMLHttpRequest();
+    ajax_request.onloadend = function () {
+        if (ajax_request.responseText.substring(0, 6) === "ERROR:") {
+            mes(ajax_request.responseText, true);
+            callback_func(false, null);
+        } else if (ajax_request.status === 0) {
+            mes("ERROR: ネットワークが不安定です", true);
+            callback_func(false, null);
+        } else if (ajax_request.status !== 200) {
+            mes("ERROR: データの取得に失敗しました(" + ajax_request.status + ")", true);
+            callback_func(false, null);
+        } else {
+            callback_func(ajax_request.responseText, ajax_request.getResponseHeader("last-modified"));
+        }
+    };
+    
+    ajax_request.open("POST", "/api/" + end_point_name, true);
+    ajax_request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+    ajax_request.timeout = timeout * 1000;
+    ajax_request.send(query_str);
+}
+
+
+function change_title (title_text, url = null) {
+    document.getElementsByTagName("title")[0].innerText = title_text;
+    
+    if (url !== null && url !== location.pathname + location.hash) {
+        history.pushState(null, "", url);
+    }
+}
+
+
+var instance_info;
+
+function update_instance_info () {
+    change_title(instance_info["instance_name"]);
+    document.getElementById("header_instance_name").innerText = instance_info["instance_name"];
+    document.getElementById("menu_instance_name").innerText = instance_info["instance_name"];
+    document.getElementById("menu_reload_button").innerText = instance_info["instance_name"];
+    
+    var menu_manual_button_elm = document.getElementById("menu_manual_button");
+    if ("manual_url" in instance_info) {
+        menu_manual_button_elm.style.display = "block";
+        menu_manual_button_elm.setAttribute("href", instance_info["manual_url"]);
+    } else {
+        menu_manual_button_elm.style.display = "none";
+    }
+    
+    /*if (location.pathname === "/") {
+        document.getElementById("splash_screen_instance_name").innerText = instance_info["instance_name"];
+    }*/
+}
+
+(function () {
+    var instance_info_json = localStorage.getItem("busrun_instance_info");
+    
+    if (instance_info_json !== null) {
+        instance_info = JSON.parse(instance_info_json);
+        
+        var last_modified_timestamp_q = "last_modified_timestamp=" + instance_info["last_modified_timestamp"];
+    } else {
+        instance_info = {
+            instance_name : BUSRUN_APP_NAME
+        };
+        
+        var last_modified_timestamp_q = null;
+    }
+    
+    update_instance_info();
+    
+    if (navigator.onLine) {
+        ajax_post("instance_info.php", last_modified_timestamp_q, function (response, last_modified) {
+            if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
+                instance_info = JSON.parse(response);
+                
+                var last_modified_date = new Date(last_modified);
+                instance_info["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
+                
+                localStorage.setItem("busrun_instance_info", JSON.stringify(instance_info));
+                
+                update_instance_info();
+            }
+        });
+    }
+}());
 
 
 window.onload = function () {

@@ -119,6 +119,7 @@ _/_/_/_/ クライアント側IndexedDB "busrun_caches" _/_/_/_/
     trips : {
         便識別名 : {
             operation_id : 車両行路識別名,
+            route_id : 経路識別名,
             first_departure_time : 「HH:MM」形式の始発時刻,
             final_arrival_time : 「HH:MM」形式の終着時刻,
             starting_stop : 始発停留所の停留所識別名,

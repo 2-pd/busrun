@@ -58,7 +58,7 @@ def generate_operation_table (mes, main_dir, date_string):
             if int(timetable[trip_id]["direction_id"]):
                 route_stops.reverse()
             
-            operations[operation_id]["trips"].append({ "trip_id" : trip_id, "first_departure_time" : departure_time, "final_arrival_time" : timetable[trip_id]["departure_times"][-1], "starting_stop" : route_stops[0]["stop_id"], "terminal_stop" : route_stops[-1]["stop_id"] })
+            operations[operation_id]["trips"].append({ "trip_id" : trip_id, "route_id" : timetable[trip_id]["route_id"], "first_departure_time" : departure_time, "final_arrival_time" : timetable[trip_id]["departure_times"][-1], "starting_stop" : route_stops[0]["stop_id"], "terminal_stop" : route_stops[-1]["stop_id"] })
     
     operation_order = []
     

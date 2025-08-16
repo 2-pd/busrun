@@ -182,5 +182,6 @@ print "    <meta name=\"description\" content=\"".$page_description."\">\n";
         <hr>
         <a id="menu_reload_button" href="/" onclick="event.preventDefault(); reload_app();"><?php print BUSRUN_APP_NAME; ?></a>
     </nav>
+    <div id="message_area"></div>
 </body>
 </html>

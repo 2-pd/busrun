@@ -42,6 +42,52 @@ var config = {};
 }());
 
 
+var message_area_elm = document.getElementById("message_area");
+var message_elm_list = [];
+
+function mes (message_text, is_error = false, display_time = 10) {
+    var box_elm = document.createElement("div");
+    
+    box_elm.innerText = message_text;
+    
+    var close_button_elm = document.createElement("button");
+    
+    box_elm.appendChild(close_button_elm);
+    close_button_elm.className = "message_close_button";
+    close_button_elm.onclick = function () {
+        delete_mes(box_elm);
+    }
+    
+    if (is_error) {
+        box_elm.className = "error_message";
+        
+        console.error(BUSRUN_APP_NAME + ": " + message_text);
+        
+        if (message_elm_list.length >= 1 && message_elm_list[message_elm_list.length - 1].innerText === message_text) {
+            delete_mes(message_elm_list[message_elm_list.length - 1]);
+        }
+    }
+    
+    if (message_elm_list.length >= 3) {
+        delete_mes(message_elm_list[0]);
+    }
+    
+    message_area_elm.prepend(box_elm);
+    message_elm_list.push(box_elm);
+    
+    setTimeout(delete_mes, display_time * 1000, box_elm);
+}
+
+function delete_mes (box_elm) {
+    var message_index = message_elm_list.indexOf(box_elm);
+    
+    if (message_index !== -1) {
+        message_area_elm.removeChild(box_elm);
+        message_elm_list.splice(message_index, 1);
+    }
+}
+
+
 function idb_start_transaction (tables, writable, callback_func) {
     var open_request = indexedDB.open("busrun_caches", BUSRUN_INDEXEDDB_VERSION);
     

@@ -626,6 +626,33 @@ function show_about () {
 }
 
 
+function reload_app () {
+    open_wait_screen();
+    
+    setTimeout(function () {
+        if (location.pathname === "/") {
+            location.reload();
+        } else {
+            location.pathname = "/";
+        }
+    }, 100);
+}
+
+
+window.onpopstate = function () {
+    if (square_popup_is_open) {
+        close_square_popup(false);
+    } else if (popup_history.length >= 1) {
+        popup_close(false, false);
+    } else {
+        if (location.pathname === "/") {
+            reload_app();
+            return;
+        }
+    }
+};
+
+
 if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("/service_worker.php");
 }

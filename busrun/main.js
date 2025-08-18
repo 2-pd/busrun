@@ -600,6 +600,51 @@ function menu_click (force_close = false) {
 }
 
 
+function show_config () {
+    var popup_inner_elm = open_popup("config_popup", "アプリの設定");
+    
+    buf = "<h5>運用情報の自動更新間隔</h5>";
+    buf += "<input type='number' id='refresh_interval' min='1' max='60' onchange='change_config();' value='" + config["refresh_interval"] + "'>分ごと";
+    buf += "<h5>運用情報のキャッシュ保管日数</h5>";
+    buf += "<input type='number' id='operation_data_cache_period' min='1' max='30' onchange='change_config();' value='" + config["operation_data_cache_period"] + "'>日前以降のキャッシュを保管";
+    buf += "<u class='execute_link' onclick='reset_config_value();'>デフォルト値に戻す</u>";
+    buf += "<div class='informational_text'>変更内容は自動で保存されます</div>";
+    
+    popup_inner_elm.innerHTML = buf;
+}
+
+function change_config () {
+    var refresh_interval_elm = document.getElementById("refresh_interval");
+    if (Number(refresh_interval_elm.value) > 60) {
+        refresh_interval_elm.value = 60;
+    } else if (Number(refresh_interval_elm.value) < 1) {
+        refresh_interval_elm.value = 1;
+    }
+    config["refresh_interval"] = Number(refresh_interval_elm.value);
+    
+    var operation_data_cache_period_elm = document.getElementById("operation_data_cache_period");
+    if (Number(operation_data_cache_period_elm.value) > 30) {
+        operation_data_cache_period_elm.value = 30;
+    } else if (Number(operation_data_cache_period_elm.value) < 1) {
+        operation_data_cache_period_elm.value = 1;
+    }
+    config["operation_data_cache_period"] = Number(operation_data_cache_period_elm.value);
+    
+    save_config();
+}
+
+function reset_config_value () {
+    if (confirm("設定をリセットしますか？")) {
+        var dafault_config = get_default_config();
+        
+        document.getElementById("refresh_interval").value = dafault_config["refresh_interval"];
+        document.getElementById("operation_data_cache_period").value = dafault_config["operation_data_cache_period"];
+        
+        change_config();
+    }
+}
+
+
 function show_about () {
     var popup_inner_elm = open_popup("about_popup");
     

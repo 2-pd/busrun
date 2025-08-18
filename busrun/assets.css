@@ -33,7 +33,7 @@ html, body {
     text-decoration: none !important;
 }
 
-a {
+a, u {
     color: #666666;
 }
 
@@ -106,6 +106,13 @@ h3 b {
     
     color: #444444;
     font-weight: inherit;
+}
+
+input[type="text"], input[type="number"] {
+    border: none;
+    border-bottom: 1px solid #cccccc;
+    
+    font-size: 18px;
 }
 
 header {
@@ -757,6 +764,22 @@ header {
     margin: 20px 0 0 0;
     
     font-size: 16px;
+}
+
+.popup input[type="number"] {
+    width: 50px;
+    
+    margin: 10px 0 0 20px;
+}
+
+.execute_link {
+    display: block;
+    
+    width: fit-content;
+    
+    margin: 25px auto 15px auto;
+    
+    line-height: 20px;
 }
 
 #about_popup, #about_popup .informational_text {

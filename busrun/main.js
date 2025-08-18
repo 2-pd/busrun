@@ -208,8 +208,27 @@ function ajax_post (end_point_name, query_str, callback_func, timeout = 30) {
     ajax_request.send(query_str);
 }
 
+
 function escape_html (text) {
     return text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+function add_slashes (text) {
+    return text.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, "\\\"");
+}
+
+function convert_to_html (text) {
+    var split_text = escape_html(text).replace(/https?:\/\/[^\s\\`\|\[\]\{\}\^]+/g, "<a href='$&' target='_blank' class='external_link'>$&</a>").split("\n");
+    
+    for (var cnt = 0; cnt < split_text.length; cnt++) {
+        if (split_text[cnt].substring(0, 2) === "# ") {
+            split_text[cnt] = "<h4>" + split_text[cnt].substring(2) + "</h4>";
+        } else if (cnt + 1 < split_text.length && split_text[cnt + 1].substring(2) !== "# ") {
+            split_text[cnt] += "<br>";
+        }
+    }
+    
+    return split_text.join("");
 }
 
 
@@ -412,6 +431,161 @@ window.onload = function () {
 };
 
 
+var popup_background_elm = document.getElementById("popup_background");
+var popup_history = [];
+var square_popup_is_open = false;
+
+function open_popup (id, title = null) {
+    if (square_popup_is_open) {
+        close_square_popup();
+    }
+    
+    popup_background_elm.style.display = "block";
+    
+    var elm = document.getElementById(id);
+    
+    if (elm === null) {
+        elm = document.createElement("div");
+        elm.id = id;
+        elm.className = "popup";
+        
+        var buf = "<button type='button' class='popup_close_button' onclick='popup_close();'></button>";
+        
+        if (title !== null) {
+            buf += "<h2>" + title + "</h2>";
+        }
+        
+        buf += "<div id='" + id + "_inner'></div>";
+        
+        elm.innerHTML = buf;
+        
+        document.getElementsByTagName("body")[0].appendChild(elm);
+    }
+    
+    for (var cnt = 0; cnt < popup_history.length; cnt++) {
+        document.getElementById(popup_history[cnt]).style.zIndex = cnt + 51;
+        
+        if (popup_history[cnt] === id) {
+            popup_history.splice(cnt, 1);
+            cnt--;
+        }
+    }
+    
+    popup_history.push(id);
+    elm.style.zIndex = 50 + popup_history.length;
+    
+    if (!elm.classList.contains("popup_active")) {
+        elm.classList.add("popup_active");
+        
+        menu_click(true);
+    }
+    
+    history.pushState(null, "", location.pathname + "#" + id);
+    
+    return document.getElementById(id + "_inner");
+}
+
+function popup_close (close_all = false, update_url = true) {
+    if (popup_history.length === 0) {
+        return;
+    }
+    
+    var id = popup_history.pop();
+    
+    if (popup_history.length === 0) {
+        popup_background_elm.style.display = "none";
+    }
+    
+    document.getElementById(id).classList.remove("popup_active");
+    
+    if (update_url) {
+        if (popup_history.length >= 1) {
+            history.replaceState(null, "", location.pathname + "#" + popup_history[popup_history.length - 1]);
+        } else {
+            history.replaceState(null, "", location.pathname);
+        }
+    }
+    
+    if (close_all && popup_history.length >= 1) {
+        popup_close(true);
+    }
+}
+
+var screen_elm = document.getElementById("popup_screen");
+var wait_screen_elm = document.getElementById("wait_screen");
+
+function open_square_popup (id, is_preview_popup = false, title = null) {
+    if (square_popup_is_open) {
+        close_square_popup();
+    }
+    
+    screen_elm.className = "popup_screen_active";
+    
+    var elm = document.getElementById(id);
+    
+    if (elm === null) {
+        elm = document.createElement("div");
+        elm.id = id;
+        
+        if (is_preview_popup) {
+            elm.className = "preview_popup";
+        } else {
+            elm.className = "square_popup";
+        }
+        
+        var buf = "<button type='button' class='popup_close_button' onclick='close_square_popup();'></button>";
+        
+        if (title !== null) {
+            buf += "<h3>" + title + "</h3>";
+        }
+        
+        buf += "<div id='" + id + "_inner'></div>";
+        
+        elm.innerHTML = buf;
+        
+        screen_elm.appendChild(elm);
+    }
+    
+    elm.classList.add("popup_active");
+    
+    popup_history.push(id);
+    square_popup_is_open = true;
+    
+    history.pushState(null, "", location.pathname + "#" + id);
+    
+    return document.getElementById(id + "_inner");
+}
+
+function close_square_popup (update_url = true) {
+    var id = popup_history.pop();
+    
+    screen_elm.className = "";
+    document.getElementById(id).classList.remove("popup_active");
+    
+    square_popup_is_open = false;
+    
+    if (update_url) {
+        if (popup_history.length >= 1) {
+            history.replaceState(null, "", location.pathname + "#" + popup_history[popup_history.length - 1]);
+        } else {
+            history.replaceState(null, "", location.pathname);
+        }
+    }
+    
+    menu_click(true);
+}
+
+function open_wait_screen () {
+    wait_screen_elm.style.display = "block";
+    screen_elm.style.backgroundColor = "transparent";
+}
+
+function close_wait_screen () {
+    wait_screen_elm.style.display = "none";
+    screen_elm.style.backgroundColor = "";
+}
+
+
 function menu_click (force_close = false) {
     var menu_elm = document.getElementById("menu");
     var menu_button_elm = document.getElementById("menu_button");
@@ -423,6 +597,32 @@ function menu_click (force_close = false) {
         menu_elm.classList.add("menu_open");
         menu_button_elm.classList.add("menu_button_active");
     }
+}
+
+
+function show_about () {
+    var popup_inner_elm = open_popup("about_popup");
+    
+    var buf = "<img src='/apple-touch-icon.webp' alt='" + BUSRUN_APP_NAME + "' id='busrun_icon'>";
+    buf += "<h2>" + escape_html(instance_info["instance_name"]) + "</h2>";
+    
+    if ("introduction_text" in instance_info) {
+        buf += "<div class='long_text'>" + convert_to_html(instance_info["introduction_text"]) + "</div>";
+    }
+    
+    if ("manual_url" in instance_info) {
+        buf += "<div class='link_block'><a href='" + add_slashes(instance_info["manual_url"]) + "' target='_blank' class='external_link'>" + escape_html(instance_info["instance_name"]) + "の使い方</a></div>";
+    }
+    
+    buf += "<h3>アプリケーション情報</h3>";
+    buf += "<h4>" + BUSRUN_APP_NAME + " v" + BUSRUN_VERSION + "</h4>";
+    buf += "<div class='link_block'><a href='" + BUSRUN_APP_INFO_URL + "' target='_blank' class='external_link'>" + BUSRUN_APP_NAME + "について</a></div>";
+    buf += "<h5>ライセンス</h5>";
+    buf += "<div class='informational_text'>" + BUSRUN_LICENSE_TEXT + "</div>";
+    buf += "<h5>ソースコード</h5>";
+    buf += "<div class='link_block'><a href='" + BUSRUN_REPOSITORY_URL + "' target='_blank' class='external_link'>" + BUSRUN_REPOSITORY_URL + "</a></div>";
+    
+    popup_inner_elm.innerHTML = buf;
 }
 
 

@@ -197,5 +197,10 @@ if ($path_info_str === "/") {
 ?>
     </div>
     <div id="message_area"></div>
+    <div id="popup_background"></div>
+    <div id="popup_screen">
+        <div id="popup_screen_blank_area" onclick="close_square_popup();"></div>
+    </div>
+    <div id="wait_screen"></div>
 </body>
 </html>

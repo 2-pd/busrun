@@ -342,6 +342,15 @@ function get_agency_list (callback_func) {
     }
 }
 
+function generate_stripe_code (stripes) {
+    var stripe_code = "";
+    for (var stripe_data of stripes) {
+        stripe_code += (stripe_code.length >= 1 ? "," : "") + " linear-gradient(to bottom, transparent 0% " + stripe_data["start"] + "%, " + stripe_data["color"] + " " + stripe_data["start"] + "% " + stripe_data["end"] + "%, transparent " + stripe_data["end"] + "% 100%)";
+    }
+    
+    return stripe_code;
+}
+
 var agency_list_area;
 var agency_links_area;
 
@@ -365,12 +374,7 @@ function update_agency_list (agencies, area_elm = null, loading_completed = true
         for (var agency_id of category["agencies"]) {
             var css_code = "background-color: " + agencies["agencies"][agency_id]["base_color"] + ";";
             if ("color_stripes" in agencies["agencies"][agency_id]) {
-                var gradient_code = "";
-                for (var stripe_data of agencies["agencies"][agency_id]["color_stripes"]) {
-                    gradient_code += (gradient_code.length >= 1 ? "," : "") + " linear-gradient(to bottom, transparent 0% " + stripe_data["start"] + "%, " + stripe_data["color"] + " " + stripe_data["start"] + "% " + stripe_data["end"] + "%, transparent " + stripe_data["end"] + "% 100%)";
-                }
-                
-                css_code += " background-image:" + gradient_code + ";";
+                css_code += " background-image:" + generate_stripe_code(agencies["agencies"][agency_id]["color_stripes"]) + ";";
             }
             
             agency_links_html += "<a href='/agency_" + agency_id + "/' onclick='event.preventDefault(); select_agency(\"" + agency_id + "\");' style='" + css_code + ";'><span>" + escape_html(agencies["agencies"][agency_id]["agency_name"]) + "</span></a>";
@@ -597,6 +601,363 @@ function menu_click (force_close = false) {
         menu_elm.classList.add("menu_open");
         menu_button_elm.classList.add("menu_button_active");
     }
+}
+
+
+function show_agency_list () {
+    var popup_inner_elm = open_popup("agency_select_popup", "事業者の切り替え");
+    
+    get_agency_list(function (agencies, loading_completed) {
+        update_agency_list(agencies, popup_inner_elm, loading_completed);
+    });
+}
+
+
+var agency_info;
+
+function update_agency_info (data) {
+    agency_info = data;
+    
+    var header_agency_name_elm = document.getElementById("header_agency_name");
+    
+    header_agency_name_elm.innerText = agency_info["agency_name"];
+    header_agency_name_elm.style.backgroundColor = agency_info["base_color"];
+    if ("color_stripes" in agency_info) {
+        header_agency_name_elm.style.backgroundImage = generate_stripe_code(agency_info["color_stripes"]);
+    } else {
+        header_agency_name_elm.style.backgroundImage = "";
+    }
+}
+
+function get_diagram_revision (date_str = null) {
+    if (date_str === null) {
+        date_str = get_date_string(get_timestamp());
+    }
+    
+    for (var diagram_revision of diagram_revisions["diagram_revisions"]) {
+        if (diagram_revision <= date_str) {
+            return diagram_revision;
+        }
+    }
+    
+    mes("指定された日付のダイヤ情報は利用できません", true);
+    
+    return false;
+}
+
+function load_agency_data (agency_id, resolve_func_1, resolve_func_2, reject_func) {
+    var promise_list_1 = [];
+    var promise_list_2 = [];
+    
+    promise_list_1.push(new Promise(function (resolve_1, reject_1) {
+        promise_list_2.push(new Promise(function (resolve_2, reject_2) {
+            idb_start_transaction("agency_info", false, function (transaction) {
+                var agency_info_store = transaction.objectStore("agency_info");
+                var get_request = agency_info_store.get(agency_id);
+                
+                get_request.onsuccess = function (evt) {
+                    if (evt.target.result !== undefined) {
+                        var agency_info_data = evt.target.result;
+                        
+                        update_agency_info(agency_info_data);
+                        
+                        var last_modified_timestamp = railroad_info_data["last_modified_timestamp"];
+                        
+                        resolve_1();
+                    } else {
+                        var last_modified_timestamp = 0;
+                        reject_1();
+                    }
+                    
+                    if (navigator.onLine) {
+                        ajax_post("agency_info.php", "agency_id=" + agency_id + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
+                            if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
+                                var agency_info_data = JSON.parse(response);
+                                
+                                agency_info_data["agency_id"] = agency_id;
+                                
+                                var last_modified_date = new Date(last_modified);
+                                agency_info_data["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
+                                
+                                update_railroad_info(agency_info_data);
+                                
+                                idb_start_transaction("agency_info", true, function (transaction) {
+                                    var agency_info_store = transaction.objectStore("agency_info");
+                                    agency_info_store.put(agency_info_data);
+                                });
+                                
+                                resolve_2(true);
+                            } else {
+                                if (last_modified_timestamp > 0) {
+                                    resolve_2(false);
+                                } else {
+                                    reject_2(null);
+                                }
+                            }
+                        });
+                    } else {
+                        if (last_modified_timestamp > 0) {
+                            resolve_2(false);
+                        } else {
+                            reject_2(null);
+                        }
+                    }
+                };
+            });
+        }));
+    }));
+    
+    promise_list_1.push(new Promise(function (resolve_1, reject_1) {
+        promise_list_2.push(new Promise(function (resolve_2, reject_2) {
+            idb_start_transaction("vehicle_icons", false, function (transaction) {
+                var vehicle_icons_store = transaction.objectStore("vehicle_icons");
+                var get_request = vehicle_icons_store.get(agency_id);
+                
+                get_request.onsuccess = function (evt) {
+                    if (evt.target.result !== undefined) {
+                        var vehicle_icons_data = evt.target.result;
+                        last_modified_timestamp = vehicle_icons_data["last_modified_timestamp"];
+                        
+                        vehicle_icons = vehicle_icons_data;
+                        
+                        resolve_1();
+                    } else {
+                        var last_modified_timestamp = 0;
+                        
+                        reject_1();
+                    }
+                    
+                    if (navigator.onLine) {
+                        ajax_post("vehicle_icons.php", "agency_id=" + agency_id + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
+                            if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
+                                var vehicle_icons_data = {agency_id : agency_id, icons : JSON.parse(response)};
+                                
+                                var last_modified_date = new Date(last_modified);
+                                vehicle_icons_data["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
+                                
+                                idb_start_transaction("vehicle_icons", true, function (transaction) {
+                                    var icons_store = transaction.objectStore("vehicle_icons");
+                                    icons_store.put(vehicle_icons_data);
+                                });
+                                
+                                vehicle_icons = vehicle_icons_data;
+                                
+                                resolve_2(true);
+                            } else {
+                                if (last_modified_timestamp > 0) {
+                                    resolve_2(false);
+                                } else {
+                                    reject_2(null);
+                                }
+                            }
+                        });
+                    } else {
+                        if (last_modified_timestamp > 0) {
+                            resolve_2(false);
+                        } else {
+                            reject_2(null);
+                        }
+                    }
+                };
+            });
+        }));
+    }));
+    
+    promise_list_1.push(new Promise(function (resolve_1, reject_1) {
+        promise_list_2.push(new Promise(function (resolve_2, reject_2) {
+            idb_start_transaction("vehicles", false, function (transaction) {
+                var vehicles_store = transaction.objectStore("vehicles");
+                var get_request = vehicles_store.get(agency_id);
+                
+                get_request.onsuccess = function (evt) {
+                    if (evt.target.result !== undefined) {
+                        var vehicles_data = evt.target.result;
+                        var last_modified_timestamp = formations_data["last_modified_timestamp"];
+                        
+                        vehicles = vehicles_data;
+                        
+                        resolve_1();
+                    } else {
+                        var last_modified_timestamp = 0;
+                        
+                        reject_1();
+                    }
+                    
+                    if (navigator.onLine) {
+                        ajax_post("vehicles.php", "agency_id=" + agency_id + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
+                            if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
+                                var vehicles_data = JSON.parse(response);
+                                
+                                vehicles_data["agency_id"] = agency_id;
+                                
+                                var last_modified_date = new Date(last_modified);
+                                vehicles_data["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
+                                
+                                idb_start_transaction("vehicles", true, function (transaction) {
+                                    var vehicles_store = transaction.objectStore("vehicles");
+                                    vehicles_store.put(vehicles_data);
+                                });
+                                
+                                vehicles = vehicles_data;
+                                
+                                resolve_2(true);
+                            } else {
+                                if (last_modified_timestamp > 0) {
+                                    resolve_2(false);
+                                } else {
+                                    reject_2(null);
+                                }
+                            }
+                        });
+                    } else {
+                        if (last_modified_timestamp > 0) {
+                            resolve_2(false);
+                        } else {
+                            reject_2(null);
+                        }
+                    }
+                };
+            });
+        }));
+    }));
+    
+    promise_list_1.push(new Promise(function (resolve_1, reject_1) {
+        promise_list_2.push(new Promise(function (resolve_2, reject_2) {
+            var tmp_diagram_revision = null;
+            
+            idb_start_transaction("diagram_revisions", false, function (transaction) {
+                var diagram_revisions_store = transaction.objectStore("diagram_revisions");
+                var get_request = diagram_revisions_store.get(agency_id);
+                
+                get_request.onsuccess = function (evt) {
+                    if (evt.target.result !== undefined) {
+                        diagram_revisions = evt.target.result;
+                        var last_modified_timestamp = diagram_revisions["last_modified_timestamp"];
+                        
+                        resolve_1();
+                        
+                        tmp_diagram_revision = get_diagram_revision();
+                    } else {
+                        var last_modified_timestamp = 0;
+                        
+                        reject_1();
+                    }
+                    
+                    if (navigator.onLine) {
+                        ajax_post("diagram_revisions.php", "agency_id=" + agency_id + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
+                            if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
+                                diagram_revisions = {agency_id : agency_id, diagram_revisions : JSON.parse(response)};
+                                
+                                var last_modified_date = new Date(last_modified);
+                                diagram_revisions["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
+                                
+                                idb_start_transaction("diagram_revisions", true, function (transaction) {
+                                    var diagram_revisions_store = transaction.objectStore("diagram_revisions");
+                                    diagram_revisions_store.put(diagram_revisions);
+                                });
+                                
+                                resolve_2(true);
+                            } else {
+                                if (tmp_diagram_revision !== null) {
+                                    resolve_2(false);
+                                } else {
+                                    reject_2(null);
+                                }
+                            }
+                        });
+                    } else {
+                        if (tmp_diagram_revision !== null) {
+                            resolve_2(false);
+                        } else {
+                            reject_2(null);
+                        }
+                    }
+                };
+            });
+        }));
+    }));
+    
+    /*if (!location.pathname.startsWith("/agency_" + agency_id + "/")) {
+        document.getElementById("tab_map_mode").setAttribute("href", "/agency_" + agency_id + "/");
+        document.getElementById("tab_timetable_mode").setAttribute("href", "/agency_" + agency_id + "/timetable/");
+        document.getElementById("tab_operation_data_mode").setAttribute("href", "/agency_" + agency_id + "/operation_data/");
+        document.getElementById("tab_vehicles_mode").setAttribute("href", "/agency_" + agency_id + "/vehicles/");
+    }*/
+    
+    Promise.all(promise_list_1).then(function () {
+        resolve_func_1();
+    }, function () {});
+    Promise.allSettled(promise_list_1).then(function () {
+        Promise.all(promise_list_2).then(function (update_exists_list) {
+            if (update_exists_list.includes(true)) {
+                resolve_func_2();
+            }
+        }, function () {
+            reject_func();
+        });
+    });
+}
+
+var tab_area_elm = document.getElementById("tab_area");
+var article_elms = document.getElementsByTagName("article");
+
+tab_area_elm.onselectstart = function (event) { event.preventDefault(); };
+
+var mode_val = -1;
+
+function change_mode (num) {
+    var blank_article_elm = document.getElementById("blank_article");
+    
+    if (num === -1) {
+        blank_article_elm.innerHTML = "";
+        blank_article_elm.style.display = "block";
+    } else {
+        if (num === mode_val) {
+            return;
+        }
+        
+        blank_article_elm.style.display = "none";
+    }
+    
+    mode_val = num;
+    
+    var tabs = tab_area_elm.getElementsByTagName("a");
+    for (var cnt = 0; cnt < article_elms.length; cnt++) {
+        if (cnt === num) {
+            article_elms[cnt].style.display = "block";
+            tabs[cnt].className = "active_tab";
+        } else {
+            article_elms[cnt].style.display = "none";
+            tabs[cnt].className = "";
+        }
+    }
+}
+
+function select_agency (agency_id, mode_name = "map_mode", mode_option_1 = null, mode_option_2 = null, mode_option_3 = null) {
+    splash_screen_elm.style.display = "none";
+    splash_screen_elm.innerHTML = "";
+    if (popup_history.length >= 1) {
+        popup_close();
+    }
+    
+    change_mode(-1);
+    
+    document.getElementById("header_agency_name").innerText = "";
+    
+    stop_info = {};
+    route_info = {};
+    diagram_info = {};
+    
+    load_agency_data(agency_id, function () {
+        //select_mode(mode_name, mode_option_1, mode_option_2, mode_option_3);
+    }, function () {
+        //select_mode(mode_name, mode_option_1, mode_option_2, mode_option_3);
+    }, function () {
+        mes("選択された事業者はデータが利用できません", true);
+        
+        show_agency_list();
+        document.getElementById("blank_article").innerHTML = "<div class='no_data'><u onclick='show_agency_list();'>事業者を選択</u>してください</div>";
+    });
 }
 
 

@@ -196,6 +196,16 @@ if ($path_info_str === "/") {
 }
 ?>
     </div>
+    <div id="blank_article" class="wait_icon"></div>
+    <article>
+    </article>
+    <article>
+    </article>
+    <article>
+    </article>
+    <article>
+    </article>
+    <div id="tab_area"><a href="<?php print $railroad_root; ?>" onclick="event.preventDefault(); map_mode();" id="tab_map_mode">トップ</a><a href="<?php print $railroad_root; ?>timetable/" onclick="event.preventDefault(); timetable_mode();" id="tab_timetable_mode">時刻表</a><a href="<?php print $railroad_root; ?>operation_data/" onclick="event.preventDefault(); operation_data_mode();" id="tab_operation_data_mode">運用データ</a><a href="<?php print $railroad_root; ?>vehicles/" onclick="event.preventDefault(); vehicles_mode();" id="tab_vehicles_mode">車両一覧</a></div>
     <div id="message_area"></div>
     <div id="popup_background"></div>
     <div id="popup_screen">

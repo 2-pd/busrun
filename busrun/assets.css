@@ -136,7 +136,7 @@ header {
     font-size: 16px;
 }
 
-#header_agency_name {
+#header_agency_name, header:has(#header_agency_name:empty) #header_instance_name {
     position: absolute;
     
     top: 25px;
@@ -146,6 +146,14 @@ header {
     height: 45px;
     
     border-radius: 0 22.5px 22.5px 0;
+    
+    line-height: 45px;
+    font-size: 20px;
+    text-indent: 20px;
+}
+
+#header_agency_name:empty {
+    display: none;
 }
 
 #menu_button {
@@ -269,12 +277,10 @@ header {
     text-align: center;
 }
 
-#splash_screen {
+#splash_screen, #agency_select_popup {
     position: fixed;
-    top: 70;
     
     width: 100vw;
-    height: calc(100vh - 70px);
     
     padding: 0;
     
@@ -283,11 +289,17 @@ header {
     z-index: 32;
 }
 
-#splash_screen_inner, #railroad_select_popup_inner {
+#splash_screen {
+    top: 70;
+    
+    height: calc(100vh - 70px);
+}
+
+#splash_screen_inner, #agency_select_popup_inner {
     position: relative;
     
     max-width: 500px;
-    height: 100%;
+    height: calc(100% - 40px);
     
     margin: 0 auto;
     
@@ -474,6 +486,18 @@ header {
     right: 20px;
     
     color: #999999;
+}
+
+#blank_article {
+    position: fixed;
+    top: 70px;
+    
+    width: 100%;
+    height: calc(100% - 70px);
+    
+    background-color: #ffffff;
+    
+    z-index: 30;
 }
 
 #message_area {
@@ -744,6 +768,22 @@ header {
     100% {
         top: 15px;
     }
+}
+
+#agency_select_popup h2 {
+    width: 100vw;
+    
+    max-width: none;
+    
+    margin: 0;
+    
+    padding: 25px 0 15px 0;
+    
+    background-color: #f7f7f7;
+}
+
+#agency_select_popup_inner {
+    height: calc(100vh - 70px);
 }
 
 .external_link:after {

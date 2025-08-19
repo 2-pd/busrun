@@ -661,7 +661,7 @@ function load_agency_data (agency_id, resolve_func_1, resolve_func_2, reject_fun
                         
                         update_agency_info(agency_info_data);
                         
-                        var last_modified_timestamp = railroad_info_data["last_modified_timestamp"];
+                        var last_modified_timestamp = agency_info_data["last_modified_timestamp"];
                         
                         resolve_1();
                     } else {
@@ -679,7 +679,7 @@ function load_agency_data (agency_id, resolve_func_1, resolve_func_2, reject_fun
                                 var last_modified_date = new Date(last_modified);
                                 agency_info_data["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
                                 
-                                update_railroad_info(agency_info_data);
+                                update_agency_info(agency_info_data);
                                 
                                 idb_start_transaction("agency_info", true, function (transaction) {
                                     var agency_info_store = transaction.objectStore("agency_info");
@@ -772,7 +772,7 @@ function load_agency_data (agency_id, resolve_func_1, resolve_func_2, reject_fun
                 get_request.onsuccess = function (evt) {
                     if (evt.target.result !== undefined) {
                         var vehicles_data = evt.target.result;
-                        var last_modified_timestamp = formations_data["last_modified_timestamp"];
+                        var last_modified_timestamp = vehicles_data["last_modified_timestamp"];
                         
                         vehicles = vehicles_data;
                         
